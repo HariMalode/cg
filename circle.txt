@@ -1,0 +1,105 @@
+#include<GL/glut.h>
+#include <cstdlib>
+#include<iostream>
+using namespace std;
+int r,x,y,x1,y1;
+bool first=true;
+void myInit(){
+glClearColor(1.0,1.0,1.0,1.0);
+glPointSize(3);
+glViewport(0,0,800,800);
+gluOrtho2D(0,800,0,800);
+}
+void line(int x1,int y1,int x2,int y2) {
+glLineWidth(2);
+glBegin(GL_LINE_LOOP);
+glVertex2i(x1,y1);
+glVertex2i(x2,y2);
+glEnd();
+glFlush();
+}
+void axis(){
+glColor3f(0.0,0.0,0.0);
+line(0,400,800,400);
+line(400,0,400,800);
+for(x=0;x<=800;x+=20) {
+line(x,390,x,410);
+}
+for(y=0;y<=800;y+=20) {
+line(390,y,410,y);
+}
+}
+void draw_circ(int x, int y, int x1, int y1) {
+glBegin(GL_POINTS);
+glVertex2i(x1+x,y1+y);
+glVertex2i(x1-x,y1+y);
+glVertex2i(x1+x,y1-y);
+glVertex2i(x1-x,y1-y);
+glVertex2i(x1+y,y1+x);
+glVertex2i(x1-y,y1+x);
+glVertex2i(x1+y,y1-x);
+glVertex2i(x1-y,y1-x);
+glEnd();
+glFlush();
+}
+void bres_circ(int r,int x1,int y1){
+int d;
+d=3-2*r;
+x=0;
+y=r;
+do {
+draw_circ(x,y,x1,y1);
+if(d<0) {
+x++;
+d=d+4*x+6;
+} else {
+d=d+4*(x-y)+10;
+x++;
+y--;
+}
+} while (x<=y);
+}
+void myDisplay(){
+glClear(GL_COLOR_BUFFER_BIT);
+glFlush();
+}
+void mouse(int btn,int state,int x,int y)
+{
+if(btn==GLUT_LEFT_BUTTON)
+{
+if(state==GLUT_DOWN)
+{
+if(first){
+axis();
+glFlush();
+first=false;
+}
+else{
+axis();
+glColor3f(1.0,0.0,0.0);
+bres_circ(r,x1+400,y1+400);
+glFlush();
+}
+}
+}
+}
+int main(int argc, char **argv)
+{
+cout<<"Enter the radius and centre coordinates of the circle"<<endl;
+cout<<"r = ";
+cin>>r;
+cout<<"x1 = ";
+cin>>x1;
+cout<<"x1 = ";
+cin>>y1;
+glutInit(&argc,argv);
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+glutInitWindowSize(800,800);
+glutInitWindowPosition(500,500);
+glutCreateWindow("Bresenham Circle");
+myInit();
+glutDisplayFunc(myDisplay);
+glutMouseFunc(mouse);
+glutMainLoop();
+return 1;
+}
